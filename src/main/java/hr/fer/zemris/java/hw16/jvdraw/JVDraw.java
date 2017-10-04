@@ -136,6 +136,9 @@ public class JVDraw extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int index = list.getSelectedIndex();
+				if(index == -1){
+					return;
+				}
 				drawingModel.remove(index);
 			}
 		});

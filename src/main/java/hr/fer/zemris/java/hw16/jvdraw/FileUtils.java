@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -171,9 +172,11 @@ public class FileUtils {
 		private void exportImage() {
 
 			JFileChooser fc = new JFileChooser();
-			FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "jpg", "png", "gif");
-			fc.setFileFilter(filter);
 
+		    fc.addChoosableFileFilter(new FileNameExtensionFilter("JPG", "jpg"));
+		    fc.addChoosableFileFilter(new FileNameExtensionFilter("PNG", "png"));
+		    fc.addChoosableFileFilter(new FileNameExtensionFilter("GIF", "gif"));
+		
 			fc.setDialogTitle("Export image");
 			if (fc.showSaveDialog(null) != JFileChooser.APPROVE_OPTION) {
 				JOptionPane.showMessageDialog(null, "Saving canceled, image isn't saved.", "Warning",
@@ -191,9 +194,22 @@ public class FileUtils {
 					return;
 				}
 			}
-
-			int len = chosenPath.toString().length();
-			String extension = chosenPath.toString().substring(len-3, len);
+	
+			String[] extensions = ((FileNameExtensionFilter) fc.getFileFilter()).getExtensions();
+			
+			String extension = null;
+			for (String ext : extensions) {
+				if (chosenPath.getFileName().endsWith("." + ext)) {
+					extension = ext;
+					break;
+				}
+			}
+			
+			if (extension == null) {
+				chosenPath = Paths.get(chosenPath + "." + extensions[0]);
+				extension = extensions[0];
+			}
+			
 			drawImage(chosenPath, extension);
 
 		}
